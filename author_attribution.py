@@ -81,8 +81,7 @@ def load_book_features(file_name):
     dis = len([item for item in words_freq_dist if words_freq_dist[item] == 2]) / num_unique_words
     richness = num_unique_words / num_total_words
 
-    result = [hapax, dis, richness, *sentences_length_dist, *words_length_dist, *pron_dist, *conj_dist]
-    return result
+    return [hapax, dis, richness, *sentences_length_dist, *words_length_dist, *pron_dist, *conj_dist]
 
 
 def extract_books_features_from_corpus():
@@ -135,8 +134,8 @@ def get_ovo_estimators_prediction(estimators, classes, x_test):
             votes[prediction == 1, j] += 1
             k += 1
 
-    maxima = votes == np.max(votes, axis=1)[:, np.newaxis]
-    if np.any(maxima.sum(axis=1) > 1):
+    max_v = votes == np.max(votes, axis=1)[:, np.newaxis]
+    if np.any(max_v.sum(axis=1) > 1):
         return -1
     else:
         return classes[votes.argmax(axis=1)]
@@ -158,7 +157,7 @@ def hybrid_clasification_for_fold(x_train, y_train, x_test, y_test):
 
     y_predict_ovr = get_ovr_estiomators_prediction(ovr.estimators_, x_test).T
 
-    y_test_predict = np.ones(len(y_test)) * -1
+    y_test_predict = -1 * np.ones(len(y_test))
     unclassified_indexes_tests_phase1 = []
 
     for index, prediction in enumerate(y_predict_ovr):
@@ -199,21 +198,21 @@ def hybrid_classification(x, y):
     for train_index, test_index in cv.split(x, y):
         results.append(hybrid_clasification_for_fold(x[train_index], y[train_index], x[test_index], y[test_index]))
 
-    accuracy, correct_after_phase1, correct_after_phase2, incorrect_after_phase1, \
-    incorrect_after_phase2, unclassified_after_phase1, unclassified_after_phase2 = np.transpose(results)
+    (accuracy, correct_after_phase1, correct_after_phase2, incorrect_after_phase1,
+     incorrect_after_phase2, unclassified_after_phase1, unclassified_after_phase2) = np.transpose(results)
 
-    print("With hybrid classification, average correct after phase 1: %f" % np.mean(correct_after_phase1))
-    print("With hybrid classification, average correct after phase 2: %f" % np.mean(correct_after_phase2))
-    print("With hybrid classification, average incorrect after phase 1: %f" % np.mean(incorrect_after_phase1))
-    print("With hybrid classification, average incorrect after phase 2: %f" % np.mean(incorrect_after_phase2))
-    print("With hybrid classification, average unclassified after phase 1: %f" % np.mean(unclassified_after_phase1))
-    print("With hybrid classification, average unclassified after phase 2: %f" % np.mean(unclassified_after_phase2))
-    print("With hybrid classification, average accuracy: %f" % np.mean(accuracy))
+    print(f"With hybrid classification, average correct after phase 1: {np.mean(correct_after_phase1)}")
+    print(f"With hybrid classification, average correct after phase 2: {np.mean(correct_after_phase2)}")
+    print(f"With hybrid classification, average incorrect after phase 1: {np.mean(incorrect_after_phase1)}")
+    print(f"With hybrid classification, average incorrect after phase 2: {np.mean(incorrect_after_phase2)}")
+    print(f"With hybrid classification, average unclassified after phase 1: {np.mean(unclassified_after_phase1)}")
+    print(f"With hybrid classification, average unclassified after phase 2: {np.mean(unclassified_after_phase2)}")
+    print(f"With hybrid classification, average accuracy: {np.mean(accuracy)}")
 
 
 def run_classification():
     if not path.exists(PROCESSED_CORPUS_PATH):
-        preprocessing.preprocess(SRC_DIR)
+        preprocessing.process(SRC_DIR)
 
     if not path.exists(FEATURES_FILE):
         x, y, le = extract_books_features_from_corpus()

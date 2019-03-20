@@ -1,8 +1,16 @@
 from os import path, walk, makedirs, chdir
 import re
 
+PUNCTUATION = {'?', '!', '..', '...'}
 
-def preprocess(src_dir):
+
+def replace(match):
+    if match[0] in PUNCTUATION:
+        return '.'
+    return ' '
+
+
+def process(src_dir):
     corpus_path = path.join(src_dir, 'corpus')
     processed_corpus_path = path.join(src_dir, 'processed_corpus')
 
@@ -19,10 +27,8 @@ def preprocess(src_dir):
         if file_names:
             for file_name in file_names:
                 chdir(dir_path)
-                book = open(file_name).read()
-                book = re.sub('[XIV\r\t_"\']| -|- ', '',
-                              ' '.join(book.replace('\n', ' ').split()).replace('?', '.').replace('!', '.').replace(
-                                  '...', '.').replace('..', '.')).lower().strip()
+                book = open(file_name, encoding='cp1251').read()
+                book = re.sub(r'[XIV\r\t\n_"\']| -|- |[?!]|\.\.\.|\.\.', repl=replace, string=book).lower()
 
                 author_dir_name = path.basename(dir_path)
                 author_processed_dir_path = path.join(processed_corpus_path, author_dir_name)
@@ -31,4 +37,5 @@ def preprocess(src_dir):
 
 
 if __name__ == '__main__':
-    preprocess()
+    SRC_DIR = path.dirname(path.realpath(__file__))
+    process(SRC_DIR)
