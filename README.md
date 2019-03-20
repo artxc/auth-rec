@@ -1,2 +1,1 @@
-# auth-rec
-SVM Classification for Author Attribution
+# SVM Classification for Author Attribution
