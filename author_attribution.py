@@ -1,18 +1,20 @@
+import re
+import warnings
+from os import path, walk, chdir
+
+import pymorphy2
+import numpy as np
+import pandas as pd
 from nltk import sent_tokenize, FreqDist
 from nltk.corpus import stopwords
-from os import path, walk, chdir
-import re
-import pymorphy2
 from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.feature_selection import SelectKBest
 from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
 from sklearn.svm import LinearSVC
-import numpy as np
-import pandas as pd
+
 import preprocessing
-import warnings
 
 warnings.filterwarnings("ignore")
 

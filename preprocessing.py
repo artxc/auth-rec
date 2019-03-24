@@ -1,5 +1,5 @@
-from os import path, walk, makedirs, chdir
 import re
+from os import path, walk, makedirs, chdir
 
 PUNCTUATION = {'?', '!', '..', '...'}
 
