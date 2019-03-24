@@ -1,4 +1,4 @@
-﻿from nltk import sent_tokenize, FreqDist
+from nltk import sent_tokenize, FreqDist
 from nltk.corpus import stopwords
 from os import path, walk, chdir
 import re
@@ -26,7 +26,9 @@ NOMINATIVE_PRONOUNS = {'я', 'ты', 'он', 'она', 'оно', 'они', 'мы
 
 
 def load_book_features(file_name):
-    text = open(file_name).read()
+    with open(file_name, 'r') as file_handler:
+        text = file_handler.read()
+
     morph = pymorphy2.MorphAnalyzer()
 
     sentence_list = sent_tokenize(text)
@@ -225,3 +227,4 @@ def run_classification():
 
 if __name__ == '__main__':
     run_classification()
+

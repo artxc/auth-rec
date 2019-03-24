@@ -27,15 +27,18 @@ def process(src_dir):
         if file_names:
             for file_name in file_names:
                 chdir(dir_path)
-                book = open(file_name, encoding='cp1251').read()
+                with open(file_name, 'r', encoding='cp1251') as file_handler:
+                    book = file_handler.read()
                 book = re.sub(r'[XIV\r\t\n_"\']| -|- |[?!]|\.\.\.|\.\.', repl=replace, string=book).lower()
 
                 author_dir_name = path.basename(dir_path)
                 author_processed_dir_path = path.join(processed_corpus_path, author_dir_name)
                 chdir(author_processed_dir_path)
-                open(file_name, 'w').write(book)
+                with open(file_name, 'w') as file_handler:
+                    file_handler.write(book)
 
 
 if __name__ == '__main__':
     SRC_DIR = path.dirname(path.realpath(__file__))
     process(SRC_DIR)
+
